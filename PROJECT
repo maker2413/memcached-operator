@@ -6,6 +6,8 @@ cliVersion: 4.12.0
 domain: maker2413.dev
 layout:
 - go.kubebuilder.io/v4
+plugins:
+  autoupdate.kubebuilder.io/v1-alpha: {}
 projectName: memcached-operator
 repo: github.com/maker2413/memcached-operator
 resources:
