@@ -1,5 +1,6 @@
 # memcached-operator
-// TODO(user): Add simple overview of use/purpose
+
+This is just my implementation of the memcached operator in the kubebuilder guide: https://book.kubebuilder.io/getting-started.
 
 ## Description
 // TODO(user): An in-depth paragraph about your project and overview of use
