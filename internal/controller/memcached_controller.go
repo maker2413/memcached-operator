@@ -52,13 +52,20 @@ type MemcachedReconciler struct {
 // +kubebuilder:rbac:groups=cache.maker2413.dev,resources=memcacheds,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=cache.maker2413.dev,resources=memcacheds/status,verbs=get;update;patch
 // +kubebuilder:rbac:groups=cache.maker2413.dev,resources=memcacheds/finalizers,verbs=update
+// +kubebuilder:rbac:groups=events.k8s.io,resources=events,verbs=create;patch
+// +kubebuilder:rbac:groups=apps,resources=deployments,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups=core,resources=pods,verbs=get;list;watch
 
 // Reconcile is part of the main kubernetes reconciliation loop which aims to
 // move the current state of the cluster closer to the desired state.
-// TODO(user): Modify the Reconcile function to compare the state specified by
-// the Memcached object against the actual cluster state, and then
-// perform operations to make the cluster state reflect the state specified by
-// the user.
+// It is essential for the controller's reconciliation loop to be idempotent. By following the Operator
+// pattern you will create Controllers which provide a reconcile function
+// responsible for synchronizing resources until the desired state is reached on the cluster.
+// Breaking this recommendation goes against the design principles of controller-runtime.
+// and may lead to unforeseen consequences such as resources becoming stuck and requiring manual intervention.
+// For further info:
+// - About Operator Pattern: https://kubernetes.io/docs/concepts/extend-kubernetes/operator/
+// - About Controllers: https://kubernetes.io/docs/concepts/architecture/controller/
 //
 // For more details, check Reconcile and its Result here:
 // - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.23.1/pkg/reconcile
@@ -199,11 +206,17 @@ func (r *MemcachedReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 }
 
 // SetupWithManager sets up the controller with the Manager.
+// The Deployment is also watched to ensure its
+// desired state in the cluster.
 func (r *MemcachedReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
+		// Watch the Memcached Custom Resource and trigger reconciliation whenever it
+		//is created, updated, or deleted
 		For(&cachev1alpha1.Memcached{}).
+		// Watch the Deployment managed by the Memcached controller. If any changes occur to the Deployment
+		// owned and managed by this controller, it will trigger reconciliation, ensuring that the cluster
+		// state aligns with the desired state.
 		Owns(&appsv1.Deployment{}).
-		Named("memcached").
 		Complete(r)
 }
 
