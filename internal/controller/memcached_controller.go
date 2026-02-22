@@ -211,7 +211,7 @@ func (r *MemcachedReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 func (r *MemcachedReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
 		// Watch the Memcached Custom Resource and trigger reconciliation whenever it
-		//is created, updated, or deleted
+		// is created, updated, or deleted
 		For(&cachev1alpha1.Memcached{}).
 		// Watch the Deployment managed by the Memcached controller. If any changes occur to the Deployment
 		// owned and managed by this controller, it will trigger reconciliation, ensuring that the cluster
