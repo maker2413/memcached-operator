@@ -63,6 +63,7 @@ jobs:
       #   kubebuilder edit --plugins="autoupdate/v1-alpha" --use-gh-models
       run: |
         kubebuilder alpha update \
+          --from-branch master \
           --force \
           --push \
           --restore-path .github/workflows \
